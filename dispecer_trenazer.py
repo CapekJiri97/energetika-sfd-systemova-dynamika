@@ -657,6 +657,27 @@ def render_kpi_row(items: list[tuple[str, str, str]]) -> None:
         )
 
 
+def apply_plotly_dark_style(fig: go.Figure, title: str, height: int, legend_y: float = -0.24) -> None:
+    fig.update_layout(
+        title=dict(text=title, x=0.01, xanchor="left", y=0.98, yanchor="top"),
+        template="plotly_dark",
+        paper_bgcolor="rgba(10,15,26,0.98)",
+        plot_bgcolor="rgba(10,15,26,0.98)",
+        font=dict(color="#ecf3ff"),
+        height=height,
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=legend_y,
+            xanchor="left",
+            x=0,
+            bgcolor="rgba(10,15,26,0.85)",
+        ),
+        margin=dict(l=26, r=18, t=72, b=96),
+    )
+
+
 def load_model_module():
     model_path = Path(__file__).with_name("SFD Energetika.py")
     spec = importlib.util.spec_from_file_location("sfd_energetika_core", model_path)
@@ -2001,15 +2022,9 @@ if current_step <= STEP_COUNT:
             fig_balance.add_hline(y=0, line_dash="dot")
             fig_balance.add_hline(y=-500, line_dash="dot", line_color="red")
             fig_balance.add_vline(x=now_h, line_dash="dash", line_color="#94a3b8")
-            fig_balance.update_layout(
-                title="Bilance sítě: historie + dvě predikce",
-                xaxis_title="Čas [h]",
-                yaxis_title="MW",
-                template="plotly_dark",
-                height=360,
-                showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-            )
+            apply_plotly_dark_style(fig_balance, "Bilance sítě: historie + dvě predikce", 360)
+            fig_balance.update_xaxes(title_text="Čas [h]")
+            fig_balance.update_yaxes(title_text="MW")
             st.plotly_chart(fig_balance, width="stretch")
 
         elif graph_menu == "Výroba zdrojů":
@@ -2066,15 +2081,9 @@ if current_step <= STEP_COUNT:
                     )
                 )
             fig_sources.add_vline(x=now_h, line_dash="dash", line_color="#94a3b8")
-            fig_sources.update_layout(
-                title="Výroba zdrojů v čase (včetně PVE) + predikce dle volby",
-                xaxis_title="Čas [h]",
-                yaxis_title="MW",
-                template="plotly_dark",
-                height=420,
-                showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-            )
+            apply_plotly_dark_style(fig_sources, "Výroba zdrojů v čase (včetně PVE) + predikce dle volby", 420, legend_y=-0.32)
+            fig_sources.update_xaxes(title_text="Čas [h]")
+            fig_sources.update_yaxes(title_text="MW")
             st.plotly_chart(fig_sources, width="stretch")
 
         elif graph_menu == "Cena + predikce":
@@ -2130,15 +2139,9 @@ if current_step <= STEP_COUNT:
                 )
             )
             fig_price.add_vline(x=now_h, line_dash="dash", line_color="#94a3b8")
-            fig_price.update_layout(
-                title="Průběh ceny a srovnání predikcí",
-                xaxis_title="Čas [h]",
-                yaxis_title="EUR/MWh",
-                template="plotly_dark",
-                height=360,
-                showlegend=True,
-                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-            )
+            apply_plotly_dark_style(fig_price, "Průběh ceny a srovnání predikcí", 360)
+            fig_price.update_xaxes(title_text="Čas [h]")
+            fig_price.update_yaxes(title_text="EUR/MWh")
             st.plotly_chart(fig_price, width="stretch")
 
         else:
@@ -2168,7 +2171,16 @@ if current_step <= STEP_COUNT:
                     template="plotly_dark",
                     title="Okamžitý mix výroby",
                 )
-                fig_pie.update_layout(height=320, showlegend=True, legend=dict(orientation="h"))
+                fig_pie.update_layout(
+                    height=320,
+                    showlegend=True,
+                    legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="left", x=0, bgcolor="rgba(10,15,26,0.85)"),
+                    paper_bgcolor="rgba(10,15,26,0.98)",
+                    plot_bgcolor="rgba(10,15,26,0.98)",
+                    font=dict(color="#ecf3ff"),
+                    margin=dict(l=20, r=20, t=70, b=80),
+                    title=dict(text="Okamžitý mix výroby", x=0.01, xanchor="left", y=0.98, yanchor="top"),
+                )
                 st.plotly_chart(fig_pie, width="stretch")
             with b2:
                 fig_storage = go.Figure()
@@ -2232,16 +2244,9 @@ if current_step <= STEP_COUNT:
                     )
                 )
                 fig_storage.add_vline(x=now_h, line_dash="dash", line_color="#94a3b8")
-                fig_storage.update_layout(
-                    title="Zásoby: baterie a horní nádrž [%]",
-                    xaxis_title="Čas [h]",
-                    yaxis_title="% kapacity",
-                    yaxis=dict(range=[0, 100]),
-                    template="plotly_dark",
-                    height=320,
-                    showlegend=True,
-                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-                )
+                apply_plotly_dark_style(fig_storage, "Zásoby: baterie a horní nádrž [%]", 320)
+                fig_storage.update_xaxes(title_text="Čas [h]")
+                fig_storage.update_yaxes(title_text="% kapacity", range=[0, 100])
                 st.plotly_chart(fig_storage, width="stretch")
 
         preview = evaluate_action_impacts(
@@ -2566,12 +2571,15 @@ else:
             )
         )
         fig_kpi_bg.update_layout(
-            title="Podkladový trend během dne",
+            title=dict(text="Podkladový trend během dne", x=0.01, xanchor="left", y=0.98, yanchor="top"),
             template="plotly_dark",
+            paper_bgcolor="rgba(10,15,26,0.98)",
+            plot_bgcolor="rgba(10,15,26,0.98)",
+            font=dict(color="#ecf3ff"),
             height=220,
-            margin=dict(l=20, r=20, t=35, b=20),
+            margin=dict(l=20, r=20, t=70, b=70),
             showlegend=True,
-            legend=dict(orientation="h", yanchor="bottom", y=1.01, xanchor="left", x=0),
+            legend=dict(orientation="h", yanchor="top", y=-0.2, xanchor="left", x=0, bgcolor="rgba(10,15,26,0.85)"),
             xaxis_title="",
             yaxis_title="",
             xaxis=dict(showgrid=False),
@@ -2587,15 +2595,9 @@ else:
             fig_balance.add_vline(x=float(boundary), line_dash="dot", line_color="#64748b")
         fig_balance.add_hline(y=0, line_dash="dot")
         fig_balance.add_hline(y=-500, line_dash="dot", line_color="red")
-        fig_balance.update_layout(
-            title="Bilance během celé směny",
-            xaxis_title="Čas [h]",
-            yaxis_title="MW",
-            template="plotly_dark",
-            height=340,
-            showlegend=True,
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-        )
+        apply_plotly_dark_style(fig_balance, "Bilance během celé směny", 340)
+        fig_balance.update_xaxes(title_text="Čas [h]")
+        fig_balance.update_yaxes(title_text="MW")
         st.plotly_chart(fig_balance, width="stretch")
 
         radar_df = pd.DataFrame(
@@ -2614,7 +2616,16 @@ else:
             title="Profil výkonu dispečera",
         )
         fig_radar.update_traces(fill="toself")
-        fig_radar.update_layout(height=360, showlegend=True)
+        fig_radar.update_layout(
+            height=360,
+            showlegend=True,
+            paper_bgcolor="rgba(10,15,26,0.98)",
+            plot_bgcolor="rgba(10,15,26,0.98)",
+            font=dict(color="#ecf3ff"),
+            margin=dict(l=20, r=20, t=70, b=70),
+            legend=dict(orientation="h", yanchor="top", y=-0.14, xanchor="left", x=0, bgcolor="rgba(10,15,26,0.85)"),
+            title=dict(text="Profil výkonu dispečera", x=0.01, xanchor="left", y=0.98, yanchor="top"),
+        )
         st.plotly_chart(fig_radar, width="stretch")
 
         history_df = pd.DataFrame(history)

@@ -23,6 +23,7 @@ st.markdown(
         --text-main: #ecf3ff;
         --text-soft: #a8bddc;
         --accent: #52c7ea;
+        color-scheme: dark;
     }
 
     html, body, [class*="css"] {
@@ -68,11 +69,45 @@ st.markdown(
         color: var(--text-soft);
     }
 
+    [data-testid="stExpander"] details {
+        background: linear-gradient(180deg, var(--bg-card), #0d1727);
+        border: 1px solid #243651;
+        border-radius: 12px;
+    }
+
+    [data-testid="stExpander"] summary {
+        background: linear-gradient(180deg, var(--bg-card), #0d1727);
+        color: var(--text-main);
+        border-radius: 12px;
+    }
+
+    [data-testid="stExpanderDetails"] {
+        background: rgba(16, 26, 43, 0.72);
+        border-radius: 0 0 12px 12px;
+    }
+
     .stSelectbox div[data-baseweb="select"] > div,
     .stNumberInput input,
     .stSlider {
         background-color: var(--bg-soft);
         color: var(--text-main);
+    }
+
+    div[data-baseweb="popover"] > div {
+        background: #101a2b !important;
+        border: 1px solid #243651 !important;
+        color: #ecf3ff !important;
+    }
+
+    div[data-baseweb="popover"] ul,
+    div[data-baseweb="popover"] li,
+    div[data-baseweb="popover"] [role="option"] {
+        background: #101a2b !important;
+        color: #ecf3ff !important;
+    }
+
+    div[data-baseweb="popover"] [aria-selected="true"] {
+        background: #17243a !important;
     }
     </style>
     """,
@@ -81,10 +116,10 @@ st.markdown(
 
 PLOTLY_DARK_LAYOUT = {
     "template": "plotly_dark",
-    "paper_bgcolor": "rgba(0,0,0,0)",
-    "plot_bgcolor": "rgba(0,0,0,0)",
+    "paper_bgcolor": "#0a0f1a",
+    "plot_bgcolor": "#0a0f1a",
     "font": {"color": "#ecf3ff", "family": "Space Grotesk, sans-serif"},
-    "legend": {"bgcolor": "rgba(0,0,0,0)"},
+    "legend": {"bgcolor": "rgba(10,15,26,0.85)"},
 }
 
 
