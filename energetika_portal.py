@@ -19,6 +19,25 @@ st.set_page_config(page_title="Energetika | Portal", layout="wide", initial_side
 st.markdown(
     """
     <style>
+    :root {
+        color-scheme: dark;
+    }
+    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+        background-color: #0a0f1a !important;
+        color: #ecf3ff !important;
+    }
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0f1a2b 0%, #0b1320 100%) !important;
+        border-right: 1px solid #25324a !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: #ecf3ff !important;
+    }
+    [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] li,
+    [data-testid="stCaptionContainer"] {
+        color: #cbd5e1 !important;
+    }
     .top-nav {
         display: flex;
         align-items: center;
